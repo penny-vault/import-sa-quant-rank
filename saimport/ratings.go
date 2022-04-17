@@ -145,6 +145,13 @@ func LoadRatings(ratingsDir string, limit int) []*SeekingAlphaRecord {
 	return ratings
 }
 
+func isValidExchange(record *SeekingAlphaRecord) bool {
+	return (record.Exchange != "OTCQX" &&
+		record.Exchange != "OTCQB" &&
+		record.Exchange != "OTC Markets" &&
+		record.Exchange != "Pink Current Info")
+}
+
 func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
 	conn, err := pgx.Connect(context.Background(), viper.GetString("DATABASE_URL"))
 	if err != nil {
@@ -187,7 +194,7 @@ func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
 		var ticker Ticker
 		saTickerId := record.TickerId
 
-		if record.Exchange != "OTCQX" && record.Exchange != "Pink Current Info" {
+		if isValidExchange(record) {
 			log.Info().Str("Ticker", tickerStr).Int("SeekingAlphaId", saTickerId).Msg("Ticker is not currently associated with Seeking Alpha ID in database")
 		}
 
@@ -206,7 +213,7 @@ func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
 		`, tickerStr).Scan(&ticker.CompanyName, &ticker.CompositeFigi, &ticker.Ticker)
 
 		if err != nil {
-			if record.Exchange != "OTCQX" && record.Exchange != "Pink Current Info" {
+			if isValidExchange(record) {
 				log.Warn().Str("ticker", tickerStr).Int("SeekingAlphaId", saTickerId).Msg("No tickers found for ticker")
 			}
 			continue
