@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/adrg/strutil"
 	"github.com/adrg/strutil/metrics"
+	"github.com/spf13/viper"
 
 	"github.com/jackc/pgx/v4"
 
@@ -146,7 +146,7 @@ func LoadRatings(ratingsDir string, limit int) []*SeekingAlphaRecord {
 }
 
 func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	conn, err := pgx.Connect(context.Background(), viper.GetString("DATABASE_URL"))
 	if err != nil {
 		log.Error().Str("OriginalError", err.Error()).Msg("Could not connect to database")
 	}
@@ -238,7 +238,7 @@ func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
 }
 
 func SaveToDB(records []*SeekingAlphaRecord) {
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	conn, err := pgx.Connect(context.Background(), viper.GetString("DATABASE_URL"))
 	if err != nil {
 		log.Error().Str("OriginalError", err.Error()).Msg("Could not connect to database")
 	}
