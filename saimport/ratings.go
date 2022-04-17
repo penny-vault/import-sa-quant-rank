@@ -187,7 +187,9 @@ func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
 		var ticker Ticker
 		saTickerId := record.TickerId
 
-		log.Info().Str("Ticker", tickerStr).Int("SeekingAlphaId", saTickerId).Msg("Ticker is not currently associated with Seeking Alpha ID in database")
+		if record.Exchange != "OTCQX" && record.Exchange != "Pink Current Info" {
+			log.Info().Str("Ticker", tickerStr).Int("SeekingAlphaId", saTickerId).Msg("Ticker is not currently associated with Seeking Alpha ID in database")
+		}
 
 		err := conn.QueryRow(context.Background(), `
 			SELECT
