@@ -58,6 +58,7 @@ var rootCmd = &cobra.Command{
 		backblaze.UploadToBackBlaze(parquetFn, viper.GetString("backblaze_bucket"), ratings[0].Date.Format("2006"))
 
 		// Cleanup after ourselves
+		os.RemoveAll(tmpdir)
 	},
 }
 
