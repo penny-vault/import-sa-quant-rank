@@ -204,7 +204,7 @@ func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
 		`, tickerStr).Scan(&ticker.CompanyName, &ticker.CompositeFigi, &ticker.Ticker)
 
 		if err != nil {
-			if record.Exchange != "OTCQX" {
+			if record.Exchange != "OTCQX" && record.Exchange != "Pink Current Info" {
 				log.Warn().Str("ticker", tickerStr).Int("SeekingAlphaId", saTickerId).Msg("No tickers found for ticker")
 			}
 			continue
