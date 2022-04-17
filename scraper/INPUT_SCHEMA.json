@@ -1,0 +1,20 @@
+{
+  "title": "Seeking Alpha Quant Histories",
+  "description": "Download quantitative rating histories from seeking alpha",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "startUrls": {
+      "title": "Start URLs",
+      "type": "array",
+      "description": "URLs to start with.",
+      "editor": "requestListSources",
+      "prefill": [
+        { "url": "https://seekingalpha.com/symbol/MSFT/earnings" }
+      ]
+    }
+  },
+  "required": [
+    "startUrls"
+  ]
+}
