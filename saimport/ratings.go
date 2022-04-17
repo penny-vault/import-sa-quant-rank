@@ -149,6 +149,8 @@ func isValidExchange(record *SeekingAlphaRecord) bool {
 	return (record.Exchange != "OTCQX" &&
 		record.Exchange != "OTCQB" &&
 		record.Exchange != "OTC Markets" &&
+		record.Exchange != "Grey Market" &&
+		record.Exchange != "Pink No Info" &&
 		record.Exchange != "Pink Current Info")
 }
 
