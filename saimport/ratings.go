@@ -221,7 +221,7 @@ func EnrichWithFigi(records []*SeekingAlphaRecord) []*SeekingAlphaRecord {
 
 		// first make sure the company names are similar - as a protective measure
 		similarity := strutil.Similarity(strings.ToLower(ticker.CompanyName), strings.ToLower(record.CompanyName), metrics.NewJaroWinkler())
-		if similarity < .8 {
+		if similarity < .7 {
 			log.Warn().Float64("Similarity", similarity).Str("ticker", record.Ticker).Int("SeekingAlphaId", record.TickerId).Str("DbCompanyName", ticker.CompanyName).Str("SaCompanyName", record.CompanyName).Msg("Not linking ticker due to company name's being too dissimilar")
 			continue
 		}
