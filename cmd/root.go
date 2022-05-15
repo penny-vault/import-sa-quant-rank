@@ -21,7 +21,7 @@ import (
 	"os"
 
 	"github.com/penny-vault/import-sa-quant-rank/backblaze"
-	"github.com/penny-vault/import-sa-quant-rank/saimport"
+	"github.com/penny-vault/import-sa-quant-rank/sa"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -40,9 +40,9 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-		ratings := saimport.LoadRatings(args[0], viper.GetInt("limit"))
-		saimport.EnrichWithFigi(ratings)
-		saimport.SaveToDB(ratings)
+		ratings := sa.LoadRatings(args[0], viper.GetInt("limit"))
+		sa.EnrichWithFigi(ratings)
+		sa.SaveToDB(ratings)
 
 		// Save data as parquet to a temporary directory
 		tmpdir, err := os.MkdirTemp(os.TempDir(), "import-sa")
@@ -52,7 +52,7 @@ var rootCmd = &cobra.Command{
 
 		parquetFn := fmt.Sprintf("%s/sa-%s.parquet", tmpdir, ratings[0].Date.Format("20060102"))
 		log.Info().Str("FileName", parquetFn).Msg("writing seeking alpha ratings data to parquet")
-		saimport.SaveToParquet(ratings, parquetFn)
+		sa.SaveToParquet(ratings, parquetFn)
 
 		// Upload to backblaze
 		backblaze.UploadToBackBlaze(parquetFn, viper.GetString("backblaze_bucket"), ratings[0].Date.Format("2006"))
