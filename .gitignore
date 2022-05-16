@@ -14,6 +14,7 @@ import-sa-quant-rank
 
 # Configuration files used in local testing
 import-sa-quant-rank.toml
+state.json
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
