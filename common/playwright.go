@@ -88,7 +88,7 @@ func StartPlaywright(headless bool) (page playwright.Page, context playwright.Br
 	log.Info().Bool("Headless", headless).Str("ExecutablePath", pw.Chromium.ExecutablePath()).Str("BrowserVersion", browser.Version()).Msg("starting playwright")
 
 	// calculate user-agent
-	userAgent := viper.GetString("user_agent")
+	userAgent := viper.GetString("playwright.user_agent")
 	if userAgent == "" {
 		userAgent = BuildUserAgent(&browser)
 	}

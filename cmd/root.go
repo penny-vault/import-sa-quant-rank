@@ -33,21 +33,20 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "import-sa-quant-rank [dirpath]",
+	Use:   "import-sa-quant-rank",
 	Short: "Import JSON ratings downloaded from Seeking Alpha's stock screener",
 	// Long: ``,
-	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-		ratings := sa.LoadRatings(args[0], viper.GetInt("limit"))
+		ratings := sa.Download()
 		sa.EnrichWithFigi(ratings)
 		sa.SaveToDB(ratings)
 
 		// Save data as parquet to a temporary directory
 		tmpdir, err := os.MkdirTemp(os.TempDir(), "import-sa")
 		if err != nil {
-			log.Error().Str("OriginalError", err.Error()).Msg("could not create tempdir")
+			log.Error().Err(err).Msg("could not create tempdir")
 		}
 
 		parquetFn := fmt.Sprintf("%s/sa-%s.parquet", tmpdir, ratings[0].Date.Format("20060102"))
@@ -55,7 +54,7 @@ var rootCmd = &cobra.Command{
 		sa.SaveToParquet(ratings, parquetFn)
 
 		// Upload to backblaze
-		backblaze.UploadToBackBlaze(parquetFn, viper.GetString("backblaze_bucket"), ratings[0].Date.Format("2006"))
+		backblaze.UploadToBackBlaze(parquetFn, viper.GetString("backblaze.bucket"), ratings[0].Date.Format("2006"))
 
 		// Cleanup after ourselves
 		os.RemoveAll(tmpdir)
@@ -78,21 +77,24 @@ func init() {
 	// Persistent flags that are global to application
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.import-sa-quant-rank.toml)")
 
+	rootCmd.PersistentFlags().String("state_file", "state.json", "state file")
+	viper.BindPFlag("playwright.state_file", rootCmd.PersistentFlags().Lookup("state_file"))
+
 	// Add flags
 	rootCmd.Flags().StringP("database_url", "d", "host=localhost port=5432", "DSN for database connection")
-	viper.BindPFlag("database_url", rootCmd.Flags().Lookup("database_url"))
+	viper.BindPFlag("database.url", rootCmd.Flags().Lookup("database_url"))
 
 	rootCmd.Flags().Uint32P("limit", "l", 0, "limit results to N")
 	viper.BindPFlag("limit", rootCmd.Flags().Lookup("limit"))
 
 	rootCmd.Flags().StringP("backblaze_bucket", "b", "seeking-alpha", "Backblaze bucket name")
-	viper.BindPFlag("backblaze_bucket", rootCmd.Flags().Lookup("backblaze_bucket"))
+	viper.BindPFlag("backblaze.bucket", rootCmd.Flags().Lookup("backblaze_bucket"))
 
 	rootCmd.Flags().String("backblaze_application_id", "<not-set>", "Backblaze application id")
-	viper.BindPFlag("backblaze_application_id", rootCmd.Flags().Lookup("backblaze_application_id"))
+	viper.BindPFlag("backblaze.application_id", rootCmd.Flags().Lookup("backblaze_application_id"))
 
 	rootCmd.Flags().String("backblaze_application_key", "<not-set>", "Backblaze application key")
-	viper.BindPFlag("backblaze_application_key", rootCmd.Flags().Lookup("backblaze_application_key"))
+	viper.BindPFlag("backblaze.application_key", rootCmd.Flags().Lookup("backblaze_application_key"))
 }
 
 // initConfig reads in config file and ENV variables if set.

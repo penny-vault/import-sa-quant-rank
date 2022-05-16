@@ -17,10 +17,16 @@ package sa
 import "time"
 
 type Ticker struct {
-	CompanyName   string
-	TickerId      int
-	Ticker        string
-	CompositeFigi string
+	CompanyName    string `json:"companyName"`
+	TickerId       int
+	Ticker         string `json:"slug"`
+	CompositeFigi  string
+	EquityType     string `json:"equityType"`
+	Exchange       string `json:"exchange"`
+	IsBdc          bool   `json:"isBdc"`
+	IsDefunct      bool   `json:"isDefunct"`
+	FollowersCount int    `json:"followersCount"`
+	IsReit         bool   `json:"isReit"`
 }
 
 type SeekingAlphaRecord struct {
@@ -29,10 +35,10 @@ type SeekingAlphaRecord struct {
 	TickerId                     int     `json:"tickerId" parquet:"name=SeekingAlphaTickerId, type=INT32"`
 	Ticker                       string  `json:"ticker" parquet:"name=Ticker, type=BYTE_ARRAY, convertedtype=UTF8, encoding=PLAIN_DICTIONARY"`
 	CompositeFigi                string  `json:"compositeFigi" parquet:"name=CompositeFigi, type=BYTE_ARRAY, convertedtype=UTF8, encoding=PLAIN_DICTIONARY"`
-	Slug                         string  `json:"slug" parquet:"name=Slug, type=BYTE_ARRAY, convertedtype=UTF8, encoding=PLAIN_DICTIONARY"`
 	CompanyName                  string  `json:"companyName" parquet:"name=CompanyName, type=BYTE_ARRAY, convertedtype=UTF8, encoding=PLAIN_DICTIONARY"`
 	Exchange                     string  `json:"exchange" parquet:"name=Exchange, type=BYTE_ARRAY, convertedtype=UTF8, encoding=PLAIN_DICTIONARY"`
 	Type                         string  `json:"type" parquet:"name=Type, type=BYTE_ARRAY, convertedtype=UTF8, encoding=PLAIN_DICTIONARY"`
+	FollowersCount               int     `parquet:"name=FollowersCount, type=INT32"`
 	MarketCap                    float64 `json:"marketcap_display" parquet:"name=MarketCap, type=DOUBLE"`
 	QuantRating                  float32 `json:"quant_rating" parquet:"name=QuantRating, type=FLOAT"`
 	AuthorsRatingPro             float32 `json:"authors_rating_pro" parquet:"name=AuthorsRatingPro, type=FLOAT"`
@@ -100,4 +106,82 @@ type SeekingAlphaRecord struct {
 	InterestCoverageRatio        float32 `json:"interest_coverage_ratio" parquet:"name=InterestCoverageRatio, type=FLOAT"`
 	DebtEq                       float32 `json:"debt_eq" parquet:"name=DebtEq, type=FLOAT"`
 	LongTermDebtPerCapital       float32 `json:"long_term_debt_per_capital" parquet:"name=LongTermDebtPerCapital, type=FLOAT"`
+}
+
+type FilterDef struct {
+	Gte      int  `json:"gte"`
+	Lte      int  `json:"lte"`
+	Disabled bool `json:"bool"`
+}
+
+type FilterGroup struct {
+	QuantRating      FilterDef `json:"quant_rating"`
+	AuthorsRatingPro FilterDef `json:"authors_rating_pro"`
+	SellSideRating   FilterDef `json:"sell_side_rating"`
+}
+
+type ScreenerArguments struct {
+	Filter  FilterGroup `json:"filter"`
+	Page    int         `json:"page"`
+	PerPage int         `json:"per_page"`
+}
+
+type ScreenerResponseMeta struct {
+	Count int `json:"count"`
+}
+
+type ScreenerResponse struct {
+	Data []ScreenerItem       `json:"data"`
+	Meta ScreenerResponseMeta `json:"meta"`
+}
+
+type ScreenerItem struct {
+	ID         string           `json:"id"`
+	Type       string           `json:"type"`
+	Attributes TickerAttributes `json:"attributes"`
+	Meta       TickerMeta       `json:"meta"`
+}
+
+type TickerAttributes struct {
+	Slug        string `json:"slug"`
+	Name        string `json:"name"`
+	Company     string `json:"company"`
+	CompanyName string `json:"companyName"`
+}
+
+type TickerMeta struct {
+	CompanyLogoUrl string `json:"companyLogoUrl"`
+	QuantRank      int    `json:"quant_rank"`
+}
+
+type MetricsMeta struct {
+	ID         string         `json:"id"`
+	Type       string         `json:"type"`
+	Attributes map[string]any `json:"attributes"`
+}
+
+type MetricRelationshipData struct {
+	ID   string `json:"id"`
+	Type string `json:"type"`
+}
+
+type MetricRelationshipValue struct {
+	Data MetricRelationshipData `json:"data"`
+}
+
+type MetricRelationship struct {
+	MetricType MetricRelationshipValue `json:"metric_type"`
+	Ticker     MetricRelationshipValue `json:"ticker"`
+}
+
+type MetricItem struct {
+	ID            string             `json:"id"`
+	Type          string             `json:"type"`
+	Attributes    map[string]any     `json:"attributes"`
+	Relationships MetricRelationship `json:"relationships"`
+}
+
+type MetricsResponse struct {
+	Data []MetricItem  `json:"data"`
+	Meta []MetricsMeta `json:"included"`
 }

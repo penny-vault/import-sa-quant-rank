@@ -26,7 +26,7 @@ func SaveToParquet(records []*SeekingAlphaRecord, fn string) error {
 
 	fh, err := local.NewLocalFileWriter(fn)
 	if err != nil {
-		log.Error().Str("OriginalError", err.Error()).Str("FileName", fn).Msg("cannot create local file")
+		log.Error().Err(err).Str("FileName", fn).Msg("cannot create local file")
 		return err
 	}
 	defer fh.Close()
@@ -34,7 +34,7 @@ func SaveToParquet(records []*SeekingAlphaRecord, fn string) error {
 	pw, err := writer.NewParquetWriter(fh, new(SeekingAlphaRecord), 4)
 	if err != nil {
 		log.Error().
-			Str("OriginalError", err.Error()).
+			Err(err).
 			Msg("Parquet write failed")
 		return err
 	}
@@ -46,7 +46,7 @@ func SaveToParquet(records []*SeekingAlphaRecord, fn string) error {
 	for _, r := range records {
 		if err = pw.Write(r); err != nil {
 			log.Error().
-				Str("OriginalError", err.Error()).
+				Err(err).
 				Str("EventDate", r.DateStr).Str("Ticker", r.Ticker).
 				Str("CompositeFigi", r.CompositeFigi).
 				Msg("Parquet write failed for record")
@@ -54,7 +54,7 @@ func SaveToParquet(records []*SeekingAlphaRecord, fn string) error {
 	}
 
 	if err = pw.WriteStop(); err != nil {
-		log.Error().Str("OriginalError", err.Error()).Msg("Parquet write failed")
+		log.Error().Err(err).Msg("Parquet write failed")
 		return err
 	}
 
