@@ -111,7 +111,7 @@ type SeekingAlphaRecord struct {
 type FilterDef struct {
 	Gte      int  `json:"gte"`
 	Lte      int  `json:"lte"`
-	Disabled bool `json:"bool"`
+	Disabled bool `json:"disabled"`
 }
 
 type FilterGroup struct {

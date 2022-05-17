@@ -15,6 +15,7 @@
 package sa
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"reflect"
@@ -237,8 +238,6 @@ func fetchMetricsResults(page playwright.Page, metricsUrl string, tickerStrs []s
 
 	resp, err := page.ExpectResponse("**/api/v3/metrics*", func() error {
 		_, err := page.Evaluate(`(url) => {
-                    console.log("fetching url");
-                    console.log(url);
                     fetch(url);
                 }`, myUrl)
 		if err != nil {
@@ -287,17 +286,24 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 		PerPage: 100,
 	}
 
+	args, err := json.Marshal(screenerArguments)
+	if err != nil {
+		log.Warn().Err(err).Msg("could not marshal screener arguments")
+	}
+
 	resp, err := page.ExpectResponse(SCREENER_API_URL, func() error {
 		_, err := page.Evaluate(`(params) => {
+            console.log("params:");
+            console.log(params);
             fetch("https://seekingalpha.com/api/v3/screener_results?quant_rank=true", {
                 method: "POST",
                 cache: 'no-cache',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(params),
+                body: params,
             });
-        }`, screenerArguments)
+        }`, string(args))
 		if err != nil {
 			log.Error().Err(err).Msg("error in page evaluate")
 		}
