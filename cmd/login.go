@@ -47,7 +47,7 @@ use the automated login on future runs.`,
 
 		// Wait for the user to press login button
 		page.WaitForNavigation()
-		page.WaitForTimeout(10000)
+		page.WaitForTimeout(30000)
 
 		common.StopPlaywright(page, context, browser, pw)
 	},

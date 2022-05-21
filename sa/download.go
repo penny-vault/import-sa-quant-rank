@@ -338,7 +338,10 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 }
 
 func getMarketTime() time.Time {
-	nyc, _ := time.LoadLocation("America/New_York")
+	nyc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		log.Error().Err(err).Msg("could not load timezone")
+	}
 	now := time.Now()
 	today := time.Date(now.Year(), now.Month(), now.Day(), 9, 30, 0, 0, nyc)
 	return today
