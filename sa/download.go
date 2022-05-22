@@ -57,8 +57,20 @@ func Download() []*SeekingAlphaRecord {
 
 	bar := progressbar.Default(256)
 	for ; pageNum < numPages; pageNum++ {
-		// wait 1 second between each load so as not to overload the server
-		page.WaitForTimeout(1000)
+
+		// restart chromium every 5 pages to deal with strange segfault error in playwright
+		if (pageNum % 5) == 0 {
+			common.StopPlaywright(page, context, browser, pw)
+			page, context, browser, pw = common.StartPlaywright(viper.GetBool("playwright.headless"))
+			setupPageBlocks(page)
+
+			if _, err := page.Goto(SCREENER_PAGE_URL, playwright.PageGotoOptions{
+				WaitUntil: playwright.WaitUntilStateNetworkidle,
+			}); err != nil {
+				log.Error().Err(err).Msg("could not load activity page")
+				return []*SeekingAlphaRecord{}
+			}
+		}
 
 		bar.Add(1)
 
