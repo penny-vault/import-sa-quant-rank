@@ -5,6 +5,4 @@ Xvfb $DISPLAY -ac -screen 0 $XVFB_WHD -nolisten tcp &
 
 # Execute CMD (original CMD of this Dockerfile gets overridden in actor build)
 echo "Executing main command"
-exec "$@
-
-./import-sa-quant-rank apify_storage/datasets/ratings
+exec "$@"
