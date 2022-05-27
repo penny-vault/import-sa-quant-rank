@@ -108,8 +108,8 @@ func initConfig() {
 		cobra.CheckErr(err)
 
 		// Search config in home directory with name ".import-sa-quant-rank" (without extension).
-		viper.AddConfigPath("/etc/import-sa-quant-rank/") // path to look for the config file in
-		viper.AddConfigPath(fmt.Sprintf("%s/.import-sa-quant-rank", home))
+		viper.AddConfigPath("/etc") // path to look for the config file in
+		viper.AddConfigPath(fmt.Sprintf("%s/.config", home))
 		viper.AddConfigPath(".")
 		viper.SetConfigType("toml")
 		viper.SetConfigName("import-sa-quant-rank")
