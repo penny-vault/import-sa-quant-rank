@@ -129,6 +129,10 @@ func SaveToDB(records []*SeekingAlphaRecord) {
 	defer conn.Close(context.Background())
 
 	for _, r := range records {
+		if r.CompositeFigi == "" {
+			log.Warn().Object("SAQuantRecord", r).Msg("skipping due to missing CompositeFigi")
+			continue
+		}
 		conn.Exec(context.Background(),
 			`INSERT INTO seeking_alpha (
 			"ticker",
