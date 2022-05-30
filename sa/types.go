@@ -14,7 +14,11 @@
 
 package sa
 
-import "time"
+import (
+	"time"
+
+	"github.com/rs/zerolog"
+)
 
 type Ticker struct {
 	CompanyName    string `json:"companyName"`
@@ -184,4 +188,13 @@ type MetricItem struct {
 type MetricsResponse struct {
 	Data []MetricItem  `json:"data"`
 	Meta []MetricsMeta `json:"included"`
+}
+
+func (record *SeekingAlphaRecord) MarshalZerologObject(e *zerolog.Event) {
+	e.Str("CompanyName", record.CompanyName)
+	e.Str("Ticker", record.Ticker)
+	e.Str("CompositeFigi", record.CompositeFigi)
+	e.Time("EventDate", record.Date)
+	e.Float32("QuantRating", record.QuantRating)
+	e.Float64("MarketCapMil", record.MarketCap)
 }
