@@ -37,8 +37,6 @@ var rootCmd = &cobra.Command{
 	Short: "Import JSON ratings downloaded from Seeking Alpha's stock screener",
 	// Long: ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-
 		ratings := sa.Download()
 		sa.EnrichWithFigi(ratings)
 		sa.SaveToDB(ratings)
@@ -73,9 +71,14 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initLog)
 
 	// Persistent flags that are global to application
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.import-sa-quant-rank.toml)")
+	rootCmd.PersistentFlags().Bool("log-json", false, "print logs as json to stderr")
+	viper.BindPFlag("log.json", rootCmd.PersistentFlags().Lookup("log-json"))
+	rootCmd.PersistentFlags().Bool("hide-progress", false, "hide progress bar")
+	viper.BindPFlag("display.hide_progress", rootCmd.PersistentFlags().Lookup("hide-progress"))
 
 	rootCmd.PersistentFlags().String("state_file", "state.json", "state file")
 	viper.BindPFlag("playwright.state_file", rootCmd.PersistentFlags().Lookup("state_file"))
@@ -120,5 +123,11 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+func initLog() {
+	if !viper.GetBool("log.json") {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 }

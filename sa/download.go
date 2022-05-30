@@ -55,7 +55,11 @@ func Download() []*SeekingAlphaRecord {
 		return []*SeekingAlphaRecord{}
 	}
 
-	bar := progressbar.Default(256)
+	var bar *progressbar.ProgressBar
+	if !viper.GetBool("display.hide_progress") {
+		bar = progressbar.Default(256)
+	}
+
 	for ; pageNum < numPages; pageNum++ {
 
 		// restart chromium every 5 pages to deal with strange segfault error in playwright
@@ -72,11 +76,16 @@ func Download() []*SeekingAlphaRecord {
 			}
 		}
 
-		bar.Add(1)
+		if !viper.GetBool("display.hide_progress") {
+			bar.Add(1)
+		}
 
 		var tickerStrs []string
 		tickerStrs, numPages = fetchScreenerResults(page, pageNum)
-		bar.ChangeMax(numPages)
+
+		if !viper.GetBool("display.hide_progress") {
+			bar.ChangeMax(numPages)
+		}
 
 		for _, metricsUrl := range []string{METRICS_1_URL, METRICS_2_URL, METRICS_3_URL, METRICS_4_URL, METRICS_5_URL, METRICS_6_URL, METRICS_7_URL, METRICS_8_URL, METRICS_9_URL, METRICS_10_URL, METRICS_11_URL, METRICS_12_URL} {
 			// Delay 150 ms to prevent being blocked
