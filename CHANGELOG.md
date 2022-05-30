@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Flag to set log format to json
+- Flag to suppress progress bar output
 
 ### Changed
 
