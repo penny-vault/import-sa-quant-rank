@@ -129,6 +129,10 @@ func SaveToDB(records []*SeekingAlphaRecord) {
 	defer conn.Close(context.Background())
 
 	for _, r := range records {
+		if r.Exchange != "NYSE" && r.Exchange != "NASDAQ" {
+			// not in a recognized exchange ... skip
+			continue
+		}
 		if r.CompositeFigi == "" {
 			log.Warn().Object("SAQuantRecord", r).Msg("skipping due to missing CompositeFigi")
 			continue
