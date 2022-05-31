@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Flag to suppress progress bar output
 
 ### Changed
+- Assets with no composite figi are not saved
 
 ### Deprecated
 
