@@ -7,14 +7,16 @@ require (
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/kothar/go-backblaze v0.0.0-20210124194846-35409b867216
 	github.com/magefile/mage v1.13.0
-	github.com/rs/zerolog v1.26.1
-	github.com/spf13/cobra v1.4.0
+	github.com/rs/zerolog v1.27.0
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/xitongsys/parquet-go v1.6.2
 	github.com/xitongsys/parquet-go-source v0.0.0-20220315005136-aec0fe3e777c
 )
 
 require (
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
@@ -26,8 +28,8 @@ require (
 	github.com/apache/thrift v0.16.0 // indirect
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/go-rod/rod v0.107.0 // indirect
-	github.com/go-rod/stealth v0.4.5
+	github.com/go-rod/rod v0.107.3 // indirect
+	github.com/go-rod/stealth v0.4.6
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -49,7 +51,7 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/playwright-community/playwright-go v0.2000.1
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
-	github.com/schollz/progressbar/v3 v3.8.6
+	github.com/schollz/progressbar/v3 v3.8.7
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
