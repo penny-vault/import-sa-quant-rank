@@ -129,7 +129,7 @@ func SaveToDB(records []*SeekingAlphaRecord) {
 	defer conn.Close(context.Background())
 
 	for _, r := range records {
-		if r.Exchange != "NYSE" && r.Exchange != "NASDAQ" {
+		if !isValidExchange(r) {
 			// not in a recognized exchange ... skip
 			continue
 		}
