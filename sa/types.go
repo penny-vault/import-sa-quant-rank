@@ -128,6 +128,8 @@ type ScreenerArguments struct {
 	Filter  FilterGroup `json:"filter"`
 	Page    int         `json:"page"`
 	PerPage int         `json:"per_page"`
+	Sort    *string     `json:"sort"`
+	Type    string      `json:"type"`
 }
 
 type ScreenerResponseMeta struct {
