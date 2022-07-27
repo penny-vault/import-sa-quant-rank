@@ -40,6 +40,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info().Bool("Test", test).Msg("Download SeekingAlpha ratings")
 		ratings := sa.Download()
+		sa.ValidateRatings(ratings)
 
 		if !test {
 			sa.EnrichWithFigi(ratings)
