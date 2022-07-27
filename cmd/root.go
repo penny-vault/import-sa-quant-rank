@@ -30,6 +30,7 @@ import (
 )
 
 var cfgFile string
+var test bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -37,9 +38,13 @@ var rootCmd = &cobra.Command{
 	Short: "Import JSON ratings downloaded from Seeking Alpha's stock screener",
 	// Long: ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		log.Info().Bool("Test", test).Msg("Download SeekingAlpha ratings")
 		ratings := sa.Download()
-		sa.EnrichWithFigi(ratings)
-		sa.SaveToDB(ratings)
+
+		if !test {
+			sa.EnrichWithFigi(ratings)
+			sa.SaveToDB(ratings)
+		}
 
 		// Save data as parquet to a temporary directory
 		tmpdir, err := os.MkdirTemp(os.TempDir(), "import-sa")
@@ -52,7 +57,9 @@ var rootCmd = &cobra.Command{
 		sa.SaveToParquet(ratings, parquetFn)
 
 		// Upload to backblaze
-		backblaze.UploadToBackBlaze(parquetFn, viper.GetString("backblaze.bucket"), ratings[0].Date.Format("2006"))
+		if !test {
+			backblaze.UploadToBackBlaze(parquetFn, viper.GetString("backblaze.bucket"), ratings[0].Date.Format("2006"))
+		}
 
 		// Cleanup after ourselves
 		os.RemoveAll(tmpdir)
@@ -79,6 +86,8 @@ func init() {
 	viper.BindPFlag("log.json", rootCmd.PersistentFlags().Lookup("log-json"))
 	rootCmd.PersistentFlags().Bool("hide-progress", false, "hide progress bar")
 	viper.BindPFlag("display.hide_progress", rootCmd.PersistentFlags().Lookup("hide-progress"))
+
+	rootCmd.Flags().BoolVarP(&test, "test", "t", false, "run in test mode and do not save results to database or upload to backblaze")
 
 	rootCmd.PersistentFlags().String("state_file", "state.json", "state file")
 	viper.BindPFlag("playwright.state_file", rootCmd.PersistentFlags().Lookup("state_file"))
