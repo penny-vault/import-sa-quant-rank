@@ -6,11 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Test flag that prevents database interaction and upload to backblaze
-- Add protections that verify certain fields have a value
 
 ### Changed
-- Updated to match most recent Seeking Alpha API changes
 
 ### Deprecated
 
@@ -19,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.4.0] - 2022-07-26
+### Added
+- Test flag that prevents database interaction and upload to backblaze
+- Add protections that verify certain fields have a value
+
+### Changed
+- Updated to match most recent Seeking Alpha API changes
 
 ## [0.3.0] - 2022-05-30
 ### Added
@@ -42,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Export to parquet
 - Export to database
 
-[Unreleased]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/penny-vault/import-sa-quant-rank/releases/tag/v0.1.0
