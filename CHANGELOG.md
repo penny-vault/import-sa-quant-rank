@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Test flag that prevents database interaction and upload to backblaze
 
 ### Changed
+- Updated to match most recent Seeking Alpha API changes
 
 ### Deprecated
 

@@ -18,8 +18,8 @@ const (
 	HOMEPAGE_URL      string = `https://seekingalpha.com/`
 	SCREENER_PAGE_URL string = `https://seekingalpha.com/screeners`
 	SCREENER_API_URL  string = `https://seekingalpha.com/api/v3/screener_results?quant_rank=true`
-	METRICS_1_URL     string = `https://seekingalpha.com/api/v3/metrics?filter[fields]=marketcap_display%2Cdividend_yield%2Cquant_rating%2Cauthors_rating_pro%2Csell_side_rating&filter[slugs]=`
-	METRICS_2_URL     string = `https://seekingalpha.com/api/v3/metrics?filter[fields]=value_category%2Cgrowth_category%2Cprofitability_category%2Cmomentum_category%2Ceps_revisions_category&filter[slugs]=`
+	METRICS_1_URL     string = `https://seekingalpha.com/api/v3/metrics?filter[fields]=marketcap_display%2Cdividend_yield%2Cquant_rating%2Cauthors_rating%2Csell_side_rating&filter[slugs]=`
+	METRICS_2_URL     string = `https://seekingalpha.com/api/v3/ticker_metric_grades?filter[algos][]=etf&filter[algos][]=dividends&filter[algos][]=main_quant&filter[algos][]=reit&filter[algos][]=reit_dividend&filter[fields]=value_category%2Cgrowth_category%2Cprofitability_category%2Cmomentum_category%2Ceps_revisions_category&filter[slugs]=`
 	METRICS_3_URL     string = `https://seekingalpha.com/api/v3/metrics?filter[fields]=earning_announce_date%2Ceps_estimate_fy1%2Crevenue_estimate%2Ceps_normalized_actual%2Ceps_surprise%2Crevenue_actual%2Crevenue_surprise&filter[slugs]=`
 	METRICS_4_URL     string = `https://seekingalpha.com/api/v3/metrics?filter[fields]=div_growth_category%2Cdiv_safety_category%2Cdiv_yield_category%2Cdiv_consistency_category&filter[slugs]=`
 	METRICS_5_URL     string = `https://seekingalpha.com/api/v3/metrics?filter[fields]=last_div_date%2Cdiv_pay_date%2Cdividend_yield%2Cdiv_yield_fwd%2Cdiv_yield_4y%2Cdiv_rate_ttm%2Cdiv_rate_fwd%2Cpayout_ratio%2Cpayout_ratio_4y%2Cdiv_grow_rate3%2Cdiv_grow_rate5%2Cdividend_growth&filter[slugs]=`

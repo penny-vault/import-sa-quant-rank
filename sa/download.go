@@ -116,8 +116,7 @@ func parseMetrics(metricsResult MetricsResponse, consolidatedMetrics map[string]
 	metricTickers, metricTypes := parseMetricsMeta(metricsResult)
 
 	for _, item := range metricsResult.Data {
-		switch item.Type {
-		case "metric":
+		if item.Type == "ticker_metric_grade" || item.Type == "metric" {
 			tickerId := item.Relationships.Ticker.Data.ID
 			tickerIdInt, err := strconv.Atoi(tickerId)
 			if err != nil {
@@ -159,7 +158,7 @@ func parseMetrics(metricsResult MetricsResponse, consolidatedMetrics map[string]
 			}
 
 			evaluateMetrics(metricName, item, metricBundle)
-		default:
+		} else {
 			log.Warn().Str("Type", item.Type).Msg("unknown item type")
 		}
 	}
@@ -257,7 +256,7 @@ func fetchMetricsResults(page playwright.Page, metricsUrl string, tickerStrs []s
 	encodedTickers := strings.Join(tickerStrs, "%2C")
 	myUrl := fmt.Sprintf("%s%s", metricsUrl, encodedTickers)
 
-	resp, err := page.ExpectResponse("**/api/v3/metrics*", func() error {
+	resp, err := page.ExpectResponse("**/api/v3/*metric*", func() error {
 		_, err := page.Evaluate(`(url) => {
                     fetch(url);
                 }`, myUrl)
@@ -316,8 +315,6 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 
 	resp, err := page.ExpectResponse(SCREENER_API_URL, func() error {
 		_, err := page.Evaluate(`(params) => {
-            console.log("params:");
-            console.log(params);
             fetch("https://seekingalpha.com/api/v3/screener_results?quant_rank=true", {
                 method: "POST",
                 cache: 'no-cache',
@@ -428,7 +425,7 @@ func evaluateMetrics(metricName string, item MetricItem, metricBundle *SeekingAl
 		} else {
 			metricBundle.QuantRating = float32(quantRating)
 		}
-	case "authors_rating_pro":
+	case "authors_rating":
 		var meaningful bool
 		if meaningful, ok = item.Attributes["meaningful"].(bool); !ok {
 			return
@@ -455,65 +452,30 @@ func evaluateMetrics(metricName string, item MetricItem, metricBundle *SeekingAl
 			log.Warn().Str("metricName", metricName).Msg("could not convert value")
 		}
 	case "value_category":
-		var meaningful bool
-		if meaningful, ok = item.Attributes["meaningful"].(bool); !ok {
-			return
-		}
-		if !meaningful {
-			return
-		}
 		if theValueCategory, ok := item.Attributes["grade"].(float64); ok {
 			metricBundle.ValueCategory = float32(theValueCategory)
 		} else {
 			log.Warn().Str("metricName", metricName).Msg("could not convert value")
 		}
 	case "growth_category":
-		var meaningful bool
-		if meaningful, ok = item.Attributes["meaningful"].(bool); !ok {
-			return
-		}
-		if !meaningful {
-			return
-		}
 		if theGrowthCategory, ok := item.Attributes["grade"].(float64); ok {
 			metricBundle.GrowthCategory = float32(theGrowthCategory)
 		} else {
 			log.Warn().Str("metricName", metricName).Msg("could not convert value")
 		}
 	case "profitability_category":
-		var meaningful bool
-		if meaningful, ok = item.Attributes["meaningful"].(bool); !ok {
-			return
-		}
-		if !meaningful {
-			return
-		}
 		if theProfitabilityCategory, ok := item.Attributes["grade"].(float64); ok {
 			metricBundle.ProfitabilityCategory = float32(theProfitabilityCategory)
 		} else {
 			log.Warn().Str("metricName", metricName).Msg("could not convert value")
 		}
 	case "momentum_category":
-		var meaningful bool
-		if meaningful, ok = item.Attributes["meaningful"].(bool); !ok {
-			return
-		}
-		if !meaningful {
-			return
-		}
 		if theMomentumCategory, ok := item.Attributes["grade"].(float64); ok {
 			metricBundle.MomentumCategory = float32(theMomentumCategory)
 		} else {
 			log.Warn().Str("metricName", metricName).Msg("could not convert value")
 		}
 	case "eps_revisions_category":
-		var meaningful bool
-		if meaningful, ok = item.Attributes["meaningful"].(bool); !ok {
-			return
-		}
-		if !meaningful {
-			return
-		}
 		if theEpsRevisionsCategory, ok := item.Attributes["grade"].(float64); ok {
 			metricBundle.EpsRevisionsCategory = float32(theEpsRevisionsCategory)
 		} else {
