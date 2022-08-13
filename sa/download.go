@@ -302,10 +302,11 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 				Disabled: true,
 			},
 		},
-		Page:    pageNum,
-		PerPage: 100,
-		Sort:    nil,
-		Type:    "stock",
+		Page:      pageNum,
+		PerPage:   100,
+		QuantRank: true,
+		Sort:      nil,
+		Type:      "stock",
 	}
 
 	args, err := json.Marshal(screenerArguments)
@@ -315,7 +316,7 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 
 	resp, err := page.ExpectResponse(SCREENER_API_URL, func() error {
 		_, err := page.Evaluate(`(params) => {
-            fetch("https://seekingalpha.com/api/v3/screener_results?quant_rank=true", {
+            fetch("https://seekingalpha.com/api/v3/screener_results", {
                 method: "POST",
                 cache: 'no-cache',
                 headers: {

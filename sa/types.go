@@ -120,16 +120,17 @@ type FilterDef struct {
 
 type FilterGroup struct {
 	QuantRating      FilterDef `json:"quant_rating"`
-	AuthorsRatingPro FilterDef `json:"authors_rating_pro"`
+	AuthorsRatingPro FilterDef `json:"authors_rating"`
 	SellSideRating   FilterDef `json:"sell_side_rating"`
 }
 
 type ScreenerArguments struct {
-	Filter  FilterGroup `json:"filter"`
-	Page    int         `json:"page"`
-	PerPage int         `json:"per_page"`
-	Sort    *string     `json:"sort"`
-	Type    string      `json:"type"`
+	Filter    FilterGroup `json:"filter"`
+	Page      int         `json:"page"`
+	PerPage   int         `json:"per_page"`
+	QuantRank bool        `json:"quant_rank"`
+	Sort      *string     `json:"sort"`
+	Type      string      `json:"type"`
 }
 
 type ScreenerResponseMeta struct {
