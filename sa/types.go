@@ -120,7 +120,7 @@ type FilterDef struct {
 
 type FilterGroup struct {
 	QuantRating      FilterDef `json:"quant_rating"`
-	AuthorsRatingPro FilterDef `json:"authors_rating_pro"`
+	AuthorsRatingPro FilterDef `json:"authors_rating"`
 	SellSideRating   FilterDef `json:"sell_side_rating"`
 }
 
