@@ -28,8 +28,8 @@ require (
 	github.com/apache/thrift v0.16.0 // indirect
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/go-rod/rod v0.108.1 // indirect
-	github.com/go-rod/stealth v0.4.6
+	github.com/go-rod/rod v0.109.3 // indirect
+	github.com/go-rod/stealth v0.4.7
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
