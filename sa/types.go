@@ -125,12 +125,12 @@ type FilterGroup struct {
 }
 
 type ScreenerArguments struct {
-	Filter    FilterGroup `json:"filter"`
-	Page      int         `json:"page"`
-	PerPage   int         `json:"per_page"`
-	QuantRank bool        `json:"quant_rank"`
-	Sort      *string     `json:"sort"`
-	Type      string      `json:"type"`
+	Filter     FilterGroup `json:"filter"`
+	Page       int         `json:"page"`
+	PerPage    int         `json:"per_page"`
+	Sort       *string     `json:"sort"`
+	TotalCount bool        `json:"total_count"`
+	Type       string      `json:"type"`
 }
 
 type ScreenerResponseMeta struct {

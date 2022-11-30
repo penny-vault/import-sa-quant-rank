@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- Changed screener_results API request to match current Seeking Alpha schema
 
 ### Deprecated
 

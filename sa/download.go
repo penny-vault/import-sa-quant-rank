@@ -302,11 +302,11 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 				Disabled: true,
 			},
 		},
-		Page:      pageNum,
-		PerPage:   100,
-		QuantRank: true,
-		Sort:      nil,
-		Type:      "stock",
+		Page:       pageNum,
+		PerPage:    100,
+		Sort:       nil,
+		TotalCount: true,
+		Type:       "stock",
 	}
 
 	args, err := json.Marshal(screenerArguments)
