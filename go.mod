@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/adrg/strutil v0.3.0
-	github.com/jackc/pgx/v4 v4.18.0
+	github.com/jackc/pgx/v4 v4.18.1
 	github.com/kothar/go-backblaze v0.0.0-20210124194846-35409b867216
 	github.com/magefile/mage v1.14.0
 	github.com/rs/zerolog v1.29.0
