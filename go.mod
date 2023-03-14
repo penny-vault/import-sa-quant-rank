@@ -1,6 +1,6 @@
 module github.com/penny-vault/import-sa-quant-rank
 
-go 1.18
+go 1.20
 
 require (
 	github.com/adrg/strutil v0.3.0
