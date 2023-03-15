@@ -47,6 +47,20 @@ use the automated login on future runs.`,
 
 		// Wait for the user to press login button
 		page.WaitForNavigation()
+
+		if _, err := page.Goto(sa.SCREENER_PAGE_URL, playwright.PageGotoOptions{
+			WaitUntil: playwright.WaitUntilStateNetworkidle,
+		}); err != nil {
+			log.Error().Err(err).Msg("could not load screener page url")
+		}
+
+		// Wait for the user to press login button
+		page.WaitForNavigation()
+
+		err := page.Mouse().Move(100, 100)
+		if err != nil {
+			log.Error().Err(err).Msg("could not move mouse")
+		}
 		page.WaitForTimeout(30000)
 
 		common.StopPlaywright(page, context, browser, pw)
