@@ -45,9 +45,6 @@ use the automated login on future runs.`,
 			log.Error().Err(err).Msg("could not load login page")
 		}
 
-		// Wait for the user to press login button
-		page.WaitForNavigation()
-
 		if _, err := page.Goto(sa.SCREENER_PAGE_URL, playwright.PageGotoOptions{
 			WaitUntil: playwright.WaitUntilStateNetworkidle,
 		}); err != nil {
@@ -55,12 +52,19 @@ use the automated login on future runs.`,
 		}
 
 		// Wait for the user to press login button
-		page.WaitForNavigation()
+		// page.WaitForNavigation()
 
-		err := page.Mouse().Move(100, 100)
+		sel, err := page.QuerySelector("px-captcha")
 		if err != nil {
-			log.Error().Err(err).Msg("could not move mouse")
+			log.Error().Err(err).Msg("failed getting selector")
 		}
+
+		bbox, err := sel.BoundingBox()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to get bounding box")
+		}
+
+		log.Error().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
 		page.WaitForTimeout(30000)
 
 		common.StopPlaywright(page, context, browser, pw)
