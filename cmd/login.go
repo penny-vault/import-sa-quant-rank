@@ -15,6 +15,11 @@
 package cmd
 
 import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/penny-vault/import-sa-quant-rank/common"
 	"github.com/penny-vault/import-sa-quant-rank/sa"
 	"github.com/playwright-community/playwright-go"
@@ -54,18 +59,28 @@ use the automated login on future runs.`,
 		// Wait for the user to press login button
 		// page.WaitForNavigation()
 
-		sel, err := page.QuerySelector("px-captcha")
-		if err != nil {
-			log.Error().Err(err).Msg("failed getting selector")
+		reader := bufio.NewReader(os.Stdin)
+		var selector string
+		for selector != "exit" {
+			fmt.Println("Enter selector: ")
+			line, _ := reader.ReadString('\n')
+			selector = strings.Trim(line, " \n")
+
+			fmt.Printf("Value: %s \n", selector)
+			sel, err := page.QuerySelector(selector)
+			if err != nil {
+				log.Error().Err(err).Msg("failed getting selector")
+			}
+
+			bbox, err := sel.BoundingBox()
+			if err != nil {
+				log.Error().Err(err).Msg("failed to get bounding box")
+			}
+
+			log.Error().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
 		}
 
-		bbox, err := sel.BoundingBox()
-		if err != nil {
-			log.Error().Err(err).Msg("failed to get bounding box")
-		}
-
-		log.Error().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
-		page.WaitForTimeout(30000)
+		page.WaitForTimeout(3000)
 
 		common.StopPlaywright(page, context, browser, pw)
 	},
