@@ -67,9 +67,11 @@ use the automated login on future runs.`,
 			selector = strings.Trim(line, " \n")
 
 			fmt.Printf("Value: %s \n", selector)
-			sel, err := page.QuerySelector(selector)
+
+			sel, err := page.Locator(selector)
 			if err != nil {
 				log.Error().Err(err).Msg("failed getting selector")
+				continue
 			}
 
 			if sel == nil {
@@ -78,9 +80,9 @@ use the automated login on future runs.`,
 				bbox, err := sel.BoundingBox()
 				if err != nil {
 					log.Error().Err(err).Msg("failed to get bounding box")
+				} else {
+					log.Info().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
 				}
-
-				log.Info().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
 			}
 		}
 
