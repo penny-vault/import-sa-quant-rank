@@ -72,12 +72,16 @@ use the automated login on future runs.`,
 				log.Error().Err(err).Msg("failed getting selector")
 			}
 
-			bbox, err := sel.BoundingBox()
-			if err != nil {
-				log.Error().Err(err).Msg("failed to get bounding box")
-			}
+			if sel == nil {
+				log.Info().Msg("selector not found!")
+			} else {
+				bbox, err := sel.BoundingBox()
+				if err != nil {
+					log.Error().Err(err).Msg("failed to get bounding box")
+				}
 
-			log.Error().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
+				log.Info().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
+			}
 		}
 
 		page.WaitForTimeout(3000)
