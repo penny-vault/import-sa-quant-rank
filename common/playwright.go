@@ -78,9 +78,20 @@ func StartPlaywright(headless bool) (page playwright.Page, context playwright.Br
 		log.Error().Err(err).Msg("could not launch playwright")
 	}
 
-	browser, err = pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
+	browserOpts := make([]playwright.BrowserTypeLaunchOptions, 0, 2)
+	browserOpts = append(browserOpts, playwright.BrowserTypeLaunchOptions{
 		Headless: playwright.Bool(headless),
 	})
+	proxy := viper.GetString("playwright.proxy")
+	if proxy != "" {
+		browserOpts = append(browserOpts, playwright.BrowserTypeLaunchOptions{
+			Proxy: &playwright.BrowserTypeLaunchOptionsProxy{
+				Server: playwright.String(proxy),
+			},
+		})
+	}
+
+	browser, err = pw.Chromium.Launch(browserOpts...)
 	if err != nil {
 		log.Error().Err(err).Msg("could not launch Chromium")
 	}
