@@ -57,7 +57,7 @@ the DOM object, issue mouse move / click events, and exit.`,
 
 		reader := bufio.NewReader(os.Stdin)
 		var wizardCmd string
-		for wizardCmd != "3" {
+		for wizardCmd != "e" {
 			fmt.Println("What do you want to do?")
 			fmt.Println("\t[1] Query selector")
 			fmt.Println("\t[2] Click Mouse")
@@ -128,17 +128,7 @@ the DOM object, issue mouse move / click events, and exit.`,
 					log.Error().Err(err).Msg("mouse click failed")
 				}
 			case "4": // mouse up
-				var x float64
-				var y float64
-				fmt.Println("Enter position [X Y]: ")
-				fmt.Scan(&x, &y)
-
-				fmt.Printf("Clicking @ %f, %f\n", x, y)
-				err := page.Mouse().Move(x, y)
-				if err != nil {
-					log.Error().Err(err).Msg("mouse move failed")
-				}
-				err = page.Mouse().Up()
+				err := page.Mouse().Up()
 				if err != nil {
 					log.Error().Err(err).Msg("mouse click failed")
 				}
