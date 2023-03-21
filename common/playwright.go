@@ -66,6 +66,7 @@ func BuildUserAgent(browser *playwright.Browser) string {
 	}
 
 	userAgent := headers["user-agent"]
+	log.Info().Str("userAgent", userAgent).Msg("User-Agent discoverd from headers")
 	userAgent = strings.Replace(userAgent, "Headless", "", -1)
 	return userAgent
 }
