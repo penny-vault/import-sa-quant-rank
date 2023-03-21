@@ -23,7 +23,6 @@ import (
 
 	"github.com/gosimple/slug"
 	"github.com/penny-vault/import-sa-quant-rank/common"
-	"github.com/penny-vault/import-sa-quant-rank/sa"
 	"github.com/playwright-community/playwright-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -40,20 +39,11 @@ the DOM object, issue mouse move / click events, and exit.`,
 		page, context, browser, pw := common.StartPlaywright(false)
 
 		// load the default homepage
-		if _, err := page.Goto(sa.HOMEPAGE_URL, playwright.PageGotoOptions{
+		if _, err := page.Goto("https://bot.incolumitas.com", playwright.PageGotoOptions{
 			WaitUntil: playwright.WaitUntilStateNetworkidle,
 		}); err != nil {
 			log.Error().Err(err).Msg("could not load login page")
 		}
-
-		if _, err := page.Goto(sa.SCREENER_PAGE_URL, playwright.PageGotoOptions{
-			WaitUntil: playwright.WaitUntilStateNetworkidle,
-		}); err != nil {
-			log.Error().Err(err).Msg("could not load screener page url")
-		}
-
-		// Wait for the user to press login button
-		// page.WaitForNavigation()
 
 		reader := bufio.NewReader(os.Stdin)
 		var wizardCmd string
