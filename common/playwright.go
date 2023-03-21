@@ -19,7 +19,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/go-rod/stealth"
 	"github.com/playwright-community/playwright-go"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -33,7 +32,7 @@ func StealthPage(context *playwright.BrowserContext) playwright.Page {
 	}
 
 	if err = page.AddInitScript(playwright.PageAddInitScriptOptions{
-		Script: playwright.String(stealth.JS),
+		Script: playwright.String(stealthJS),
 	}); err != nil {
 		log.Error().Err(err).Msg("could not load stealth mode")
 	}
@@ -67,6 +66,7 @@ func BuildUserAgent(browser *playwright.Browser) string {
 	}
 
 	userAgent := headers["user-agent"]
+	log.Info().Str("userAgent", userAgent).Msg("User-Agent discoverd from headers")
 	userAgent = strings.Replace(userAgent, "Headless", "", -1)
 	return userAgent
 }
@@ -78,11 +78,26 @@ func StartPlaywright(headless bool) (page playwright.Page, context playwright.Br
 		log.Error().Err(err).Msg("could not launch playwright")
 	}
 
-	browser, err = pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
-		Headless: playwright.Bool(headless),
-	})
+	var browserOpts playwright.BrowserTypeLaunchOptions
+	proxy := viper.GetString("playwright.proxy")
+	if proxy == "" {
+		log.Info().Msg("no proxy server used")
+		browserOpts = playwright.BrowserTypeLaunchOptions{
+			Headless: playwright.Bool(headless),
+		}
+	} else {
+		log.Info().Str("proxy", proxy).Msg("using proxy server")
+		browserOpts = playwright.BrowserTypeLaunchOptions{
+			Headless: playwright.Bool(headless),
+			Proxy: &playwright.BrowserTypeLaunchOptionsProxy{
+				Server: playwright.String(proxy),
+			},
+		}
+	}
+
+	browser, err = pw.Chromium.Launch(browserOpts)
 	if err != nil {
-		log.Error().Err(err).Msg("could not launch Chromium")
+		log.Fatal().Err(err).Str("exe", pw.Chromium.ExecutablePath()).Msg("could not launch Chromium")
 	}
 
 	log.Info().Bool("Headless", headless).Str("ExecutablePath", pw.Chromium.ExecutablePath()).Str("BrowserVersion", browser.Version()).Msg("starting playwright")
