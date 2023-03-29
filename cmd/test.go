@@ -176,7 +176,7 @@ func init() {
 
 func solveCaptcha(page playwright.Page) {
 	// get the px-captcha element
-	sel, err := page.QuerySelector("px-captcha")
+	sel, err := page.QuerySelector("#px-captcha")
 	if err != nil {
 		log.Error().Err(err).Msg("failed getting selector")
 		return
@@ -205,7 +205,8 @@ func solveCaptcha(page playwright.Page) {
 	yEnd := rand.Intn(60) + 20 + bbox.Y
 
 	page.Mouse().Move(float64(xEnd), float64(yEnd))
-	time.Sleep(time.Second)
+	dur := time.Millisecond * time.Duration(rand.Intn(200))
+	time.Sleep(dur)
 	page.Mouse().Down()
 
 	isSolved := false
