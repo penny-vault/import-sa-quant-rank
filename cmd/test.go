@@ -16,7 +16,11 @@ package cmd
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"image/color"
+	"image/jpeg"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -54,6 +58,7 @@ the DOM object, issue mouse move / click events, and exit.`,
 			fmt.Println("\t[3] Mouse Down")
 			fmt.Println("\t[4] Mouse Up")
 			fmt.Println("\t[5] Screenshot Element")
+			fmt.Println("\t[6] Solve human captcha")
 			fmt.Println("\t[e] Exit")
 
 			line, _ := reader.ReadString('\n')
@@ -151,6 +156,8 @@ the DOM object, issue mouse move / click events, and exit.`,
 					dur := end.Sub(start)
 					fmt.Printf("Screenshot took %d ms\n", dur.Milliseconds())
 				}
+			case "6": // solve human captcha
+				solveCaptcha(page)
 			case "e":
 				log.Info().Msg("exiting...")
 			default:
@@ -165,4 +172,76 @@ the DOM object, issue mouse move / click events, and exit.`,
 
 func init() {
 	rootCmd.AddCommand(testCmd)
+}
+
+func solveCaptcha(page playwright.Page) {
+	// get the px-captcha element
+	sel, err := page.QuerySelector("#px-captcha")
+	if err != nil {
+		log.Error().Err(err).Msg("failed getting selector")
+		return
+	}
+
+	if sel == nil {
+		log.Info().Msg("selector not found!")
+		return
+	}
+
+	bbox, err := sel.BoundingBox()
+	if err != nil {
+		log.Error().Err(err).Msg("could not get bounding box of object")
+		return
+	}
+
+	// select a random point on the screen to begin
+	xBegin := rand.Intn(200)
+	yBegin := rand.Intn(100)
+
+	page.Mouse().Move(float64(xBegin), float64(yBegin))
+	time.Sleep(time.Second)
+
+	// select a random point somewhere in the middle-ish of the button to end
+	xEnd := rand.Intn(200) + 50 + bbox.X
+	yEnd := rand.Intn(60) + 20 + bbox.Y
+
+	page.Mouse().Move(float64(xEnd), float64(yEnd))
+	dur := time.Millisecond * time.Duration(rand.Intn(200))
+	time.Sleep(dur)
+	page.Mouse().Down()
+
+	isSolved := false
+	for !isSolved {
+		screenshot, err := sel.Screenshot(playwright.ElementHandleScreenshotOptions{
+			Type: playwright.ScreenshotTypeJpeg,
+		})
+		if err != nil {
+			log.Error().Err(err).Msg("failed to capture element screenshot")
+			return
+		}
+
+		buf := bytes.NewBuffer(screenshot)
+		img, err := jpeg.Decode(buf)
+		if err != nil {
+			log.Error().Err(err).Msg("cannot decode image")
+			return
+		}
+
+		c := img.At(300, 50)
+		white := color.RGBA{255, 255, 255, 255}
+		filled := color.RGBA{57, 57, 57, 255}
+
+		switch c {
+		case white:
+			// not yet solved
+			log.Info().Msg("captcha not-yet solved")
+		case filled:
+			isSolved = true
+			log.Info().Msg("captcha solved!")
+		default:
+			log.Info().Msg("unknown color found; assuming captcha is not yet solved")
+		}
+	}
+
+	time.Sleep(20 * time.Millisecond)
+	page.Mouse().Up()
 }

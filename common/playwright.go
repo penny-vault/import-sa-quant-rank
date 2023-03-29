@@ -37,6 +37,8 @@ func StealthPage(context *playwright.BrowserContext) playwright.Page {
 		log.Error().Err(err).Msg("could not load stealth mode")
 	}
 
+	page.SetViewportSize(1920, 1080)
+
 	return page
 }
 
