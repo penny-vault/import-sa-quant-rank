@@ -377,7 +377,7 @@ func setupPageBlocks(page playwright.Page) {
 			strings.Contains(request.URL(), "sitescout.com") ||
 			strings.Contains(request.URL(), "ipredictive.com") ||
 			strings.Contains(request.URL(), "eyeota.net") ||
-			strings.Contains(request.URL(), "collect") ||
+			// strings.Contains(request.URL(), "collect") ||
 			strings.Contains(request.URL(), "beacon") ||
 			strings.Contains(request.URL(), "mone") ||
 			strings.Contains(request.URL(), "mone_event") {
