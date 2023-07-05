@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Changed screener_results API request to match current Seeking Alpha schema
 
 ### Deprecated
 
@@ -17,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.5.0]
+### Changed
+- Exit with non-zero status when number of tickers returned is less than 3000
+- Upgrade to Chromium 115
+
+### Fixed
+- Fixed screener_results API request to match current Seeking Alpha schema
 
 ## [0.4.0] - 2022-07-26
 ### Added
@@ -48,7 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Export to parquet
 - Export to database
 
-[Unreleased]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/penny-vault/import-sa-quant-rank/compare/v0.1.0...v0.2.0
