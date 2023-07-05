@@ -16,6 +16,7 @@ package sa
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"reflect"
@@ -30,7 +31,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Download() []*SeekingAlphaRecord {
+func Download() ([]*SeekingAlphaRecord, error) {
 	page, context, browser, pw := common.StartPlaywright(viper.GetBool("playwright.headless"))
 
 	// get time of metrics
@@ -52,7 +53,7 @@ func Download() []*SeekingAlphaRecord {
 		WaitUntil: playwright.WaitUntilStateNetworkidle,
 	}); err != nil {
 		log.Error().Err(err).Msg("could not load activity page")
-		return []*SeekingAlphaRecord{}
+		return []*SeekingAlphaRecord{}, err
 	}
 
 	var bar *progressbar.ProgressBar
@@ -72,7 +73,7 @@ func Download() []*SeekingAlphaRecord {
 				WaitUntil: playwright.WaitUntilStateNetworkidle,
 			}); err != nil {
 				log.Error().Err(err).Msg("could not load activity page")
-				return []*SeekingAlphaRecord{}
+				return []*SeekingAlphaRecord{}, err
 			}
 		}
 
@@ -81,7 +82,12 @@ func Download() []*SeekingAlphaRecord {
 		}
 
 		var tickerStrs []string
-		tickerStrs, numPages = fetchScreenerResults(page, pageNum)
+		var err error
+		tickerStrs, numPages, err = fetchScreenerResults(page, pageNum)
+		if err != nil {
+			log.Error().Err(err).Msg("error during fetchScreenerResults")
+			return []*SeekingAlphaRecord{}, err
+		}
 
 		if !viper.GetBool("display.hide_progress") {
 			bar.ChangeMax(numPages)
@@ -92,7 +98,11 @@ func Download() []*SeekingAlphaRecord {
 			page.WaitForTimeout(150)
 
 			// fetch metrics
-			metrics := fetchMetricsResults(page, metricsUrl, tickerStrs)
+			metrics, err := fetchMetricsResults(page, metricsUrl, tickerStrs)
+			if err != nil {
+				log.Error().Err(err).Msg("error during fetchMetricsResults")
+				return []*SeekingAlphaRecord{}, err
+			}
 
 			// parse metrics
 			parseMetrics(metrics, consolidatedMetrics)
@@ -108,7 +118,7 @@ func Download() []*SeekingAlphaRecord {
 		result = append(result, item)
 	}
 
-	return result
+	return result, nil
 }
 
 func parseMetrics(metricsResult MetricsResponse, consolidatedMetrics map[string]*SeekingAlphaRecord) {
@@ -252,7 +262,7 @@ func parseMetricsMeta(metricsResult MetricsResponse) (map[string]*Ticker, map[st
 	return metricTickers, metricTypes
 }
 
-func fetchMetricsResults(page playwright.Page, metricsUrl string, tickerStrs []string) MetricsResponse {
+func fetchMetricsResults(page playwright.Page, metricsUrl string, tickerStrs []string) (MetricsResponse, error) {
 	encodedTickers := strings.Join(tickerStrs, "%2C")
 	myUrl := fmt.Sprintf("%s%s", metricsUrl, encodedTickers)
 
@@ -267,6 +277,7 @@ func fetchMetricsResults(page playwright.Page, metricsUrl string, tickerStrs []s
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("error in expect response")
+		return MetricsResponse{}, err
 	}
 
 	status := resp.Status()
@@ -275,15 +286,17 @@ func fetchMetricsResults(page playwright.Page, metricsUrl string, tickerStrs []s
 		err = resp.JSON(&metricsResult)
 		if err != nil {
 			log.Error().Err(err).Msg("error deserializing JSON for metrics response")
+			return MetricsResponse{}, errors.New("error deserializing JSON for metrics response")
 		}
 	} else {
 		log.Error().Int("Status", status).Msg("metrics response has invalid status")
+		return MetricsResponse{}, errors.New("metrics response has invalid status")
 	}
 
-	return metricsResult
+	return metricsResult, nil
 }
 
-func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
+func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int, error) {
 	screenerArguments := ScreenerArguments{
 		Filter: FilterGroup{
 			QuantRating: FilterDef{
@@ -294,12 +307,12 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 			AuthorsRatingPro: FilterDef{
 				Gte:      1,
 				Lte:      5,
-				Disabled: true,
+				Disabled: false,
 			},
 			SellSideRating: FilterDef{
 				Gte:      1,
 				Lte:      5,
-				Disabled: true,
+				Disabled: false,
 			},
 		},
 		Page:       pageNum,
@@ -332,7 +345,7 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("failed waiting for response for POST SCREENER_URL")
-		return []string{}, 0
+		return []string{}, 0, err
 	}
 
 	status := resp.Status()
@@ -341,10 +354,16 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 	if status == 200 {
 		if err := resp.JSON(&screenerData); err != nil {
 			log.Error().Err(err).Msg("error parsing JSON response for SCREENER_URL")
+			return []string{}, 0, err
 		}
 	} else {
 		log.Error().Int("Status", status).Int("PageNum", pageNum).Msg("invalid status received from POST SCREENER_URL")
-		return []string{}, 0
+		return []string{}, 0, errors.New("invalid screener API status returned")
+	}
+
+	if screenerData.Meta.Count < 3000 {
+		log.Error().Int("Count", screenerData.Meta.Count).Msg("Num tickers matching screen is below threshold")
+		return []string{}, 0, errors.New("tickers returned below threshold")
 	}
 
 	tickerStrs := make([]string, 0, len(screenerData.Data))
@@ -355,7 +374,7 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int) {
 	// recalculate the number of pages
 	numPages := int(math.Ceil(float64(screenerData.Meta.Count) / 100.0))
 
-	return tickerStrs, numPages
+	return tickerStrs, numPages, nil
 }
 
 func getMarketTime() time.Time {
@@ -370,7 +389,8 @@ func getMarketTime() time.Time {
 
 func setupPageBlocks(page playwright.Page) {
 	// block a variety of domains that contain trackers and ads
-	page.Route("**/*", func(route playwright.Route, request playwright.Request) {
+	page.Route("**/*", func(route playwright.Route) {
+		request := route.Request()
 		if strings.Contains(request.URL(), "google.com") ||
 			strings.Contains(request.URL(), "facebook.com") ||
 			strings.Contains(request.URL(), "adsystem.com") ||

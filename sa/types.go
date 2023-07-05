@@ -128,7 +128,7 @@ type ScreenerArguments struct {
 	Filter     FilterGroup `json:"filter"`
 	Page       int         `json:"page"`
 	PerPage    int         `json:"per_page"`
-	Sort       *string     `json:"sort"`
+	Sort       *string     `json:"sort,omitempty"`
 	TotalCount bool        `json:"total_count"`
 	Type       string      `json:"type"`
 }
@@ -157,8 +157,9 @@ type TickerAttributes struct {
 }
 
 type TickerMeta struct {
-	CompanyLogoUrl string `json:"companyLogoUrl"`
-	QuantRank      int    `json:"quant_rank"`
+	CompanyLogoUrl      string `json:"companyLogoUrl"`
+	CompanyLogoUrlLight string `json:"companyLogoUrlLight"`
+	CompanyLogoUrlDark  string `json:"companyLogoUrlDark"`
 }
 
 type MetricsMeta struct {
