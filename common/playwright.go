@@ -91,7 +91,7 @@ func StartPlaywright(headless bool) (page playwright.Page, context playwright.Br
 		log.Info().Str("proxy", proxy).Msg("using proxy server")
 		browserOpts = playwright.BrowserTypeLaunchOptions{
 			Headless: playwright.Bool(headless),
-			Proxy: &playwright.BrowserTypeLaunchOptionsProxy{
+			Proxy: &playwright.Proxy{
 				Server: playwright.String(proxy),
 			},
 		}
@@ -114,7 +114,7 @@ func StartPlaywright(headless bool) (page playwright.Page, context playwright.Br
 	// load browser state
 	stateFileName := viper.GetString("playwright.state_file")
 	log.Info().Str("StateFile", stateFileName).Msg("state location")
-	var storageState playwright.BrowserNewContextOptionsStorageState
+	var storageState playwright.OptionalStorageState
 	data, err := os.ReadFile(stateFileName)
 	if err != nil {
 		log.Error().Err(err)
@@ -148,11 +148,6 @@ func StopPlaywright(page playwright.Page, context playwright.BrowserContext, bro
 		log.Error().Err(err).Msg("could not get storage state")
 	}
 	log.Info().Int("NumCookies", len(storage.Cookies)).Msg("session state")
-
-	log.Info().Msg("closing context")
-	if err := context.Close(); err != nil {
-		log.Error().Err(err).Msg("error encountered when closing context")
-	}
 
 	log.Info().Msg("closing browser")
 	if err := browser.Close(); err != nil {
