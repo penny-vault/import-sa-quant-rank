@@ -39,7 +39,11 @@ var rootCmd = &cobra.Command{
 	// Long: ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info().Bool("Test", test).Msg("Download SeekingAlpha ratings")
-		ratings := sa.Download()
+		ratings, err := sa.Download()
+		if err != nil {
+			log.Error().Err(err).Msg("error downloading ticker metrics")
+			os.Exit(1)
+		}
 		sa.ValidateRatings(ratings)
 
 		if !test {
@@ -51,6 +55,7 @@ var rootCmd = &cobra.Command{
 		tmpdir, err := os.MkdirTemp(os.TempDir(), "import-sa")
 		if err != nil {
 			log.Error().Err(err).Msg("could not create tempdir")
+			os.Exit(1)
 		}
 
 		parquetFn := fmt.Sprintf("%s/sa-%s.parquet", tmpdir, ratings[0].Date.Format("20060102"))
