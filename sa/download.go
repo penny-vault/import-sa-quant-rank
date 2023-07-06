@@ -302,16 +302,7 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int, err
 			QuantRating: FilterDef{
 				Gte:      1,
 				Lte:      5,
-				Disabled: false,
-			},
-			AuthorsRatingPro: FilterDef{
-				Gte:      1,
-				Lte:      5,
-				Disabled: false,
-			},
-			SellSideRating: FilterDef{
-				Gte:      1,
-				Lte:      5,
+				Exclude:  false,
 				Disabled: false,
 			},
 		},

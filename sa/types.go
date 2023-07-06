@@ -115,13 +115,14 @@ type SeekingAlphaRecord struct {
 type FilterDef struct {
 	Gte      int  `json:"gte"`
 	Lte      int  `json:"lte"`
+	Exclude  bool `json:"exclude"`
 	Disabled bool `json:"disabled"`
 }
 
 type FilterGroup struct {
-	QuantRating      FilterDef `json:"quant_rating"`
-	AuthorsRatingPro FilterDef `json:"authors_rating"`
-	SellSideRating   FilterDef `json:"sell_side_rating"`
+	QuantRating FilterDef `json:"quant_rating"`
+	// AuthorsRatingPro FilterDef `json:"authors_rating"`
+	// SellSideRating   FilterDef `json:"sell_side_rating"`
 }
 
 type ScreenerArguments struct {
