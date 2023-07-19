@@ -300,10 +300,9 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int, err
 	screenerArguments := ScreenerArguments{
 		Filter: FilterGroup{
 			QuantRating: FilterDef{
-				Gte:      1,
-				Lte:      5,
-				Exclude:  false,
-				Disabled: false,
+				Gte:     1,
+				Lte:     5,
+				Exclude: false,
 			},
 		},
 		Page:       pageNum,
@@ -320,8 +319,8 @@ func fetchScreenerResults(page playwright.Page, pageNum int) ([]string, int, err
 
 	resp, err := page.ExpectResponse(SCREENER_API_URL, func() error {
 		_, err := page.Evaluate(`(params) => {
-            fetch("https://seekingalpha.com/api/v3/screener_results", {
-                method: "POST",
+            fetch('https://seekingalpha.com/api/v3/screener_results', {
+                method: 'POST',
                 cache: 'no-cache',
                 headers: {
                     'Content-Type': 'application/json'
