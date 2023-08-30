@@ -52,7 +52,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
-	github.com/playwright-community/playwright-go v0.3500.0
+	github.com/playwright-community/playwright-go v0.3700.0
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
 	github.com/schollz/progressbar/v3 v3.13.1
 	github.com/spf13/afero v1.9.5 // indirect
