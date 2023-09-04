@@ -31,8 +31,8 @@ func StealthPage(context *playwright.BrowserContext) playwright.Page {
 		log.Error().Err(err).Msg("could not create page")
 	}
 
-	if err = page.AddInitScript(playwright.PageAddInitScriptOptions{
-		Script: playwright.String(stealthJS),
+	if err = page.AddInitScript(playwright.Script{
+		Content: playwright.String(stealthJS),
 	}); err != nil {
 		log.Error().Err(err).Msg("could not load stealth mode")
 	}
@@ -92,7 +92,7 @@ func StartPlaywright(headless bool) (page playwright.Page, context playwright.Br
 		browserOpts = playwright.BrowserTypeLaunchOptions{
 			Headless: playwright.Bool(headless),
 			Proxy: &playwright.Proxy{
-				Server: playwright.String(proxy),
+				Server: proxy,
 			},
 		}
 	}

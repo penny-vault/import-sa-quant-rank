@@ -85,7 +85,7 @@ the DOM object, issue mouse move / click events, and exit.`,
 					if err != nil {
 						log.Error().Err(err).Msg("failed to get bounding box")
 					} else {
-						log.Info().Int("X", bbox.X).Int("Y", bbox.Y).Int("Height", bbox.Height).Int("Width", bbox.Width).Msg("bounding box")
+						log.Info().Float64("X", bbox.X).Float64("Y", bbox.Y).Float64("Height", bbox.Height).Float64("Width", bbox.Width).Msg("bounding box")
 					}
 				}
 			case "2": // click mouse
@@ -201,8 +201,8 @@ func solveCaptcha(page playwright.Page) {
 	time.Sleep(time.Second)
 
 	// select a random point somewhere in the middle-ish of the button to end
-	xEnd := rand.Intn(200) + 50 + bbox.X
-	yEnd := rand.Intn(60) + 20 + bbox.Y
+	xEnd := rand.Intn(200) + 50 + int(bbox.X)
+	yEnd := rand.Intn(60) + 20 + int(bbox.Y)
 
 	page.Mouse().Move(float64(xEnd), float64(yEnd))
 	dur := time.Millisecond * time.Duration(rand.Intn(200))
