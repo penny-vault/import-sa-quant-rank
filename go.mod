@@ -3,7 +3,7 @@ module github.com/penny-vault/import-sa-quant-rank
 go 1.20
 
 require (
-	github.com/adrg/strutil v0.3.0
+	github.com/adrg/strutil v0.3.1
 	github.com/gosimple/slug v1.13.1
 	github.com/jackc/pgx/v4 v4.18.1
 	github.com/kothar/go-backblaze v0.0.0-20210124194846-35409b867216
